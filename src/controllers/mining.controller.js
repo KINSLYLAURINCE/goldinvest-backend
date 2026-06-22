@@ -13,7 +13,7 @@ const getModels = () => {
   // 1. Chargement/Initialisation manuelle de MiningSession s'il n'existe pas encore
   let MiningSession = sequelize.models.MiningSession;
   if (!MiningSession) {
-    const initMiningSession = require('../models/miningSession.Js');
+    const initMiningSession = require('../models/MiningSession');
     MiningSession = initMiningSession(sequelize, DataTypes);
   }
 
