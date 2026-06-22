@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: goldinvest-backend
+    runtime: node
+    region: frankfurt
+    plan: free
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DB_HOST
+        fromDatabase:
+          name: goldinvest-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: goldinvest-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: goldinvest-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: goldinvest-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: goldinvest-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: ALLOWED_ORIGINS
+        value: https://goldinvest-app.vercel.app
+      - key: GOLD_API_KEY
+        sync: false
+      - key: GOLD_API_URL
+        value: https://www.goldapi.io/api
+
+databases:
+  - name: goldinvest-db
+    databaseName: goldinvest_db
+    user: goldinvest_user
+    region: frankfurt
+    plan: free
