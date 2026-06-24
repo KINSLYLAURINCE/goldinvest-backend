@@ -9,6 +9,7 @@ const User = sequelize.define('User', {
   password:     { type: DataTypes.STRING, allowNull: false },
   role:         { type: DataTypes.ENUM('investor', 'admin'), defaultValue: 'investor' },
   isVerified:   { type: DataTypes.BOOLEAN, defaultValue: false },
+  isActive:   { type: DataTypes.BOOLEAN, defaultValue: true },
   balance:      { type: DataTypes.DECIMAL(18, 2), defaultValue: 0.00 },
   refreshToken: { type: DataTypes.TEXT, allowNull: true },
 
