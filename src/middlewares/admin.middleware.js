@@ -4,6 +4,8 @@ const Admin = require('../models/Admin');
 module.exports = async (req, res, next) => {
   try {
     const header = req.headers.authorization;
+    console.log('🔑 Auth header reçu:', header);
+    console.log('🍪 All headers:', req.headers);
     if (!header?.startsWith('Bearer '))
       return res.status(401).json({ message: 'Non autorisé' });
 
