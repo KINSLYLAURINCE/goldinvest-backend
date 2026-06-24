@@ -208,3 +208,47 @@ exports.updateTransaction = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
+
+// ✅ GESTION UTILISATEURS
+
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'balance', 'isActive', 'hasDeposited', 'createdAt'],
+      order: [['createdAt', 'DESC']],
+    });
+    res.json({ data: users });
+  } catch (e) {
+    console.error('❌ Erreur getUsers:', e);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+exports.updateUserStatus = async (req, res) => {
+  try {
+    const { status } = req.body; // 'active' | 'disabled'
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+
+    await user.update({ isActive: status === 'active' });
+    console.log(`✅ Compte ${status === 'active' ? 'activé' : 'désactivé'} → userId: ${user.id}`);
+    res.json({ data: user, message: `Compte ${status === 'active' ? 'activé' : 'désactivé'}` });
+  } catch (e) {
+    console.error('❌ Erreur updateUserStatus:', e);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+
+    await user.destroy();
+    console.log(`🗑️ Compte supprimé → userId: ${req.params.id}`);
+    res.json({ data: null, message: 'Compte supprimé' });
+  } catch (e) {
+    console.error('❌ Erreur deleteUser:', e);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
