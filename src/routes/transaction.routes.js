@@ -12,8 +12,8 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
-  filename:    (req, file, cb) => {
-    const ext  = path.extname(file.originalname);
+  filename: (req, file, cb) => {
+    const ext  = path.extname(file.originalname) || '.jpg'; // fallback si pas d'extension
     const name = `proof_${req.user?.id}_${Date.now()}${ext}`;
     cb(null, name);
   },
@@ -21,10 +21,29 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
-    if (['image/jpeg','image/png','image/webp'].includes(file.mimetype)) cb(null, true);
-    else cb(new Error('Format non supporté'), false);
+    const allowedMimes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+      'image/bmp',
+      'image/tiff',
+      'image/heic',
+      'image/heif',
+      'application/octet-stream', // iPhone envoie parfois HEIC avec ce MIME
+    ];
+
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.heic', '.heif'];
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    if (allowedMimes.includes(file.mimetype) || allowedExts.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Format non supporté'), false);
+    }
   },
 });
 
